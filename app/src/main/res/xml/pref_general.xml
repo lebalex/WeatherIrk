@@ -1,0 +1,41 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_sync_frequency_titles"
+        android:entryValues="@array/pref_sync_frequency_values"
+        android:key="update_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_update_frequency" />
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_update_start"
+        android:inputType="numberSigned"
+        android:key="update_start"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_update_start" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="save_log"
+        android:summary=""
+        android:title="@string/save_log_Title" />
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="10"
+        android:inputType="numberSigned"
+        android:key="timeout"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_timeout" />
+
+
+</PreferenceScreen>
