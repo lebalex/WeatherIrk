@@ -5,14 +5,21 @@
     <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
     <option name="myNullables">
       <value>
+<<<<<<< HEAD
         <list size="7">
+=======
+        <list size="5">
+>>>>>>> 04f569d37034501f1a8230910968b70638827b52
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
           <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
           <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
           <item index="4" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
+<<<<<<< HEAD
           <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
           <item index="6" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
+=======
+>>>>>>> 04f569d37034501f1a8230910968b70638827b52
         </list>
       </value>
     </option>
