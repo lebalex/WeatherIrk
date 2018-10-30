@@ -4,11 +4,13 @@ package xyz.lebalex.weatherirk;
  * Created by ivc_lebedevav on 30.01.2017.
  */
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -41,6 +43,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
@@ -49,6 +52,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
@@ -65,6 +69,10 @@ public class WeatherWidget extends AppWidgetProvider {
     public static String ACTION_AUTO_UPDATE_WIDGET = "ACTION_AUTO_UPDATE_WIDGET";
     public static String ACTION_USER_PRESENT = "android.intent.action.USER_PRESENT";
     public static String ACTION_APPWIDGET_ENABLED = "android.appwidget.action.APPWIDGET_ENABLED";
+    private Context context;
+    private AppWidgetManager appWidgetManager;
+    private int[] appWidgetIds;
+    private SharedPreferences sp;
 
     @Override
     public void onEnabled(Context context) {
@@ -105,6 +113,7 @@ public class WeatherWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        this.context = context;
 
         calen = Calendar.getInstance();
         howUpdate="hand";
@@ -117,7 +126,7 @@ public class WeatherWidget extends AppWidgetProvider {
         super.onReceive(context, intent);
         LogWrite.Log(context, "-----------------------");
         LogWrite.Log(context, "onReceive="+intent.getAction());
-        SharedPreferences sp = getDefaultSharedPreferences(context);
+        sp = getDefaultSharedPreferences(context);
         try {
         if (ACTION_AUTO_UPDATE_WIDGET.equalsIgnoreCase(intent.getAction()) || ACTION_APPWIDGET_ENABLED.equalsIgnoreCase(intent.getAction())
                 || (ACTION_USER_PRESENT.equalsIgnoreCase(intent.getAction()) && !sp.getBoolean("last_time", false))
@@ -128,12 +137,15 @@ public class WeatherWidget extends AppWidgetProvider {
 
             howUpdate=intent.getAction();
             LogWrite.Log(context,"");
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager = AppWidgetManager.getInstance(context);
             ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WeatherWidget.class.getName());
-            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+            appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
             if(objReceived == null){
                 LogWrite.Log(context,"objReceived == null");
-                if (calen.get(Calendar.HOUR_OF_DAY) >=Integer.parseInt(sp.getString("update_start", "0")))
+                int startH = Integer.parseInt(sp.getString("update_start", "0"));
+                if(ACTION_APPWIDGET_ENABLED.equalsIgnoreCase(intent.getAction()))
+                    startH=0;
+                if (calen.get(Calendar.HOUR_OF_DAY) >=startH)
                 {
                     LogWrite.Log(context,"do");
                     /*PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -151,7 +163,8 @@ public class WeatherWidget extends AppWidgetProvider {
 
                         if(networkInfo!=null && isNetworkConnectedOrConnecting) {
                             LogWrite.Log(context, networkInfo.getTypeName());
-                            int countLoad=0;
+                            new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
+                            /*int countLoad=0;
                             while(objReceived==null && countLoad<3) {
                                 LogWrite.Log(context, "step = "+countLoad);
                                 objReceived = getWeather(context, Integer.parseInt(sp.getString("timeout", "10")) * 1000);
@@ -165,7 +178,7 @@ public class WeatherWidget extends AppWidgetProvider {
                                     }
                                 }
                                 countLoad++;
-                            }
+                            }*/
                         }else
                             LogWrite.Log(context, "Not Active Network");
 
@@ -177,12 +190,14 @@ public class WeatherWidget extends AppWidgetProvider {
                         wl.release();
                     }*/
                 }else LogWrite.Log(context, "not time");
-            } else
-                LogWrite.Log(context,"objReceived != null");
-            if(objReceived!=null)
+            } else {
+                LogWrite.Log(context, "objReceived != null");
+                onUpdate(context, appWidgetManager, appWidgetIds);
+            }
+            /*if(objReceived!=null)
                 onUpdate(context, appWidgetManager, appWidgetIds);
             else
-                LogWrite.Log(context, "objReceived is null");
+                LogWrite.Log(context, "objReceived is null");*/
 
         }
         }catch (Exception e) {
@@ -261,7 +276,57 @@ public class WeatherWidget extends AppWidgetProvider {
         alarmMgr.cancel(PendingIntent.getBroadcast(context, 0, intent, 0));
     }
 
-    @Nullable
+    class GetWaether extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            String result = "";
+            try {
+                URL url = new URL(params[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                int code = urlConnection.getResponseCode();
+                if(code==200){
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    if (in != null) {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+                        String line = "";
+                        while ((line = bufferedReader.readLine()) != null)
+                            result += line;
+                    }
+                    in.close();
+                }
+                return result;
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+            } catch (IOException e) {
+                //e.printStackTrace();
+            }
+            finally {
+                urlConnection.disconnect();
+            }
+            return result;
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if(result!="") {
+                JSONObject dataJsonObj = null;
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+
+                    objReceived=jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")));
+                    onUpdate(context, appWidgetManager, appWidgetIds);
+
+                }catch(Exception e){
+                    LogWrite.LogError(context, e.getMessage());
+                }
+
+            }
+        }
+    }
+    /*@Nullable
     private static JSONObject getWeather(Context context, int timeout) {
 
 
@@ -269,8 +334,7 @@ public class WeatherWidget extends AppWidgetProvider {
 
         StrictMode.setThreadPolicy(policy);
 
-        //String urls = "http://lebalexwebapp.azurewebsites.net/pogodaIrk.aspx";
-        String urls = "http://lebalex.xyz/pogoda/pogoda.php";
+        String urls = "http://lebalex.xyz/lebalexServices/pogoda/meteo.php";
         String rs = null;
         LogWrite.Log(context, "getWeather");
         try {
@@ -305,7 +369,15 @@ public class WeatherWidget extends AppWidgetProvider {
             rs = rs.replaceAll("&nbsp;"," ");
             try {
                 JSONArray jsonArray = new JSONArray(rs);
-                return jsonArray.getJSONObject(0);
+                int notNaN=-1;
+                for (int i=0;i<jsonArray.length();i++) {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    if (!json.getString("temp").equals("NaN")) {
+                        if (notNaN < 0)
+                            notNaN = i;
+                    }
+                }
+                return jsonArray.getJSONObject((notNaN==-1)?0:notNaN);
             }catch(Exception e)
             {
                 return null;
@@ -316,6 +388,6 @@ public class WeatherWidget extends AppWidgetProvider {
         }
 
 
-    }
+    }*/
 
 }

@@ -2,8 +2,10 @@ package xyz.lebalex.weatherirk;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
@@ -16,23 +18,39 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridLayout;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.net.URLConnection;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 
 public class MainActivity extends AppCompatActivity {
+    private GridLayout gridlayout;
+    private ProgressBar progressBar3;
+    private static CharSequence[] entries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +68,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        GridLayout gridlayout = (GridLayout ) findViewById(R.id.grid);
+        MobileAds.initialize(this, "ca-app-pub-6392397454770928/1263238767");
+
+
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.loadAd(new AdRequest.Builder()
+                .setRequestAgent("android_studio:ad_template").build());
+
+
+        gridlayout = (GridLayout ) findViewById(R.id.grid);
+        progressBar3 = (ProgressBar ) findViewById(R.id.progressBar3);
 
         SharedPreferences sp = getDefaultSharedPreferences(this);
-        String resultJson = loadWaether(Integer.parseInt(sp.getString("timeout", "10")));
+        new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
+
+        /*String resultJson = loadWaether(Integer.parseInt(sp.getString("timeout", "10")));
         JSONObject dataJsonObj = null;
 
         try {
@@ -79,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         }catch(Exception e){
             LogWrite.LogError(this, e.getMessage());
         }
-
+*/
 
 
 
@@ -96,11 +125,12 @@ public class MainActivity extends AppCompatActivity {
         param.height = GridLayout.LayoutParams.WRAP_CONTENT;
         param.width = GridLayout.LayoutParams.WRAP_CONTENT;
         //param.rightMargin = 5;
-        param.topMargin = 5;
+        param.topMargin = 15;
         param.leftMargin = 15;
         param.columnSpec = GridLayout.spec(0);
         param.rowSpec = GridLayout.spec(i);
         rowTextView.setLayoutParams (param);
+
 
 
         final TextView rowTextView2 = new TextView(this);
@@ -111,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         param =new GridLayout.LayoutParams();
         param.height = GridLayout.LayoutParams.WRAP_CONTENT;
         param.width = GridLayout.LayoutParams.WRAP_CONTENT;
-        param.rightMargin = 5;
+        param.rightMargin = 15;
         param.topMargin = 5;
         //param.leftMargin = 5;
         param.columnSpec = GridLayout.spec(1);
@@ -119,61 +149,82 @@ public class MainActivity extends AppCompatActivity {
         param.setGravity(Gravity.RIGHT);
         rowTextView2.setLayoutParams (param);
     }
-    public String loadWaether(int timeout) {
 
+    class GetWaether extends AsyncTask<String, Void, String> {
 
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-            StrictMode.setThreadPolicy(policy);
-
-            //String urls = "http://lebalexwebapp.azurewebsites.net/pogodaIrk.aspx";
-            String urls = "http://lebalex.xyz/pogoda/pogoda.php";
-            /*URL url = new URL(urls);
-
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            if ((line = reader.readLine()) != null) {
-                buffer.append(line);
-            }
-
-            String rs = buffer.toString();*/
-            String rs = null;
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            String result = "";
             try {
-
-            BufferedReader inputStream = null;
-            URL jsonUrl = new URL(urls);
-            URLConnection dc = jsonUrl.openConnection();
-            dc.setConnectTimeout(timeout*1000);
-            dc.setReadTimeout(timeout*1000);
-            inputStream = new BufferedReader(new InputStreamReader(
-                    dc.getInputStream()));
-
-            rs = inputStream.readLine();
-            }catch (Exception eee) {
-                LogWrite.LogError(this, eee.getMessage());
-                rs=null;
+                URL url = new URL(params[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                int code = urlConnection.getResponseCode();
+                if(code==200){
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    if (in != null) {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+                        String line = "";
+                        while ((line = bufferedReader.readLine()) != null)
+                            result += line;
+                    }
+                    in.close();
+                }
+                return result;
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+            } catch (IOException e) {
+                //e.printStackTrace();
             }
-
-            if(rs!=null) {
-                String a = "" + (char) 0x00B0;
-                //rs = rs.replaceAll("u0026deg;",a);
-                rs = rs.replaceAll("&deg;", a);
-                rs = rs.replaceAll("&nbsp;", " ");
-                //(char) 0x00B0
+            finally {
+                urlConnection.disconnect();
             }
-            return rs;
+            return result;
 
+        }
 
+        @Override
+        protected void onPostExecute(String result) {
+            if(result!="") {
+                JSONObject dataJsonObj = null;
+
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    entries = new String[jsonArray.length()];
+                    for (int i=0;i<jsonArray.length();i++)
+                    {
+                        JSONObject json = jsonArray.getJSONObject(i);
+                        String where = json.getString("where");
+                        String val = json.getString("temp");
+                        setValue(gridlayout, where, val, i);
+                        entries[i] = where;
+
+                    }
+                    Intent intent = new Intent(getApplicationContext(), WeatherWidget.class);
+                    intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+                    int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
+                    if(ids.length>0) {
+                        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                        final Bundle bundle = new Bundle();
+                        SharedPreferences sp = getDefaultSharedPreferences(getApplication());
+                        bundle.putBinder("object_value", new ObjectWrapperForBinder(jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")))));
+                        intent.putExtras(bundle);
+                        sendBroadcast(intent);
+                    }
+
+                }catch(Exception e){
+                    LogWrite.LogError(getApplicationContext(), e.getMessage());
+                }
+
+            }
+            progressBar3.setVisibility(View.GONE);
+        }
     }
 
+
+    public static CharSequence[] getEntries() {
+        return entries;
+    }
 
 
     @Override
@@ -196,11 +247,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             return true;
         }
-        if (id == R.id.action_logs) {
+        /*if (id == R.id.action_logs) {
             Intent i = new Intent(this, LogActivity.class);
             startActivity(i);
             return true;
-        }
+        }*/
 
 
         return super.onOptionsItemSelected(item);

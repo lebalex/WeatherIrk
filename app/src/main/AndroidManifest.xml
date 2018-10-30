@@ -46,7 +46,7 @@
         <receiver
             android:name=".WeatherWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="Weather Widget">
+            android:label="Погода Иркутск">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="ACTION_AUTO_UPDATE_WIDGET" />

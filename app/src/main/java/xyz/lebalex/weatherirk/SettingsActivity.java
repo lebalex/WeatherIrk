@@ -190,10 +190,29 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("update_frequency"));
             bindPreferenceSummaryToValue(findPreference("update_start"));
-            bindPreferenceSummaryToValue(findPreference("timeout"));
+            //bindPreferenceSummaryToValue(findPreference("timeout"));
+
+            ListPreference listPreference = (ListPreference) findPreference("place_temp");
+            setListPreferenceData(listPreference);
+            /*listPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    //open browser or intent here
+                }
+            });*/
+
+            bindPreferenceSummaryToValue(findPreference("place_temp"));
 
         }
+        protected static void setListPreferenceData(ListPreference lp) {
+            CharSequence[] entries = MainActivity.getEntries();
+            CharSequence[] entryValues = new String[entries.length];
+            for (int i=0;i<entries.length;i++)
+                entryValues[i]=Integer.toString(i);
 
+            lp.setEntries(entries);
+            lp.setDefaultValue("0");
+            lp.setEntryValues(entryValues);
+        }
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
