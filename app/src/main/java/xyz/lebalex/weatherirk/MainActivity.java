@@ -79,36 +79,10 @@ public class MainActivity extends AppCompatActivity {
         gridlayout = (GridLayout ) findViewById(R.id.grid);
         progressBar3 = (ProgressBar ) findViewById(R.id.progressBar3);
 
+        //StartServices.startBackgroundService(this);
+
         SharedPreferences sp = getDefaultSharedPreferences(this);
         new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
-
-        /*String resultJson = loadWaether(Integer.parseInt(sp.getString("timeout", "10")));
-        JSONObject dataJsonObj = null;
-
-        try {
-            JSONArray jsonArray = new JSONArray(resultJson);
-            for (int i=0;i<jsonArray.length();i++)
-            {
-                JSONObject json = jsonArray.getJSONObject(i);
-                String where = json.getString("where");
-                String val = json.getString("temp");
-                setValue(gridlayout, where, val, i);
-            }
-            Intent intent = new Intent(this, WeatherWidget.class);
-            intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-            int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
-            if(ids.length>0) {
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-                final Bundle bundle = new Bundle();
-                bundle.putBinder("object_value", new ObjectWrapperForBinder(jsonArray.getJSONObject(0)));
-                intent.putExtras(bundle);
-                sendBroadcast(intent);
-            }
-
-        }catch(Exception e){
-            LogWrite.LogError(this, e.getMessage());
-        }
-*/
 
 
 

@@ -78,37 +78,8 @@ public class WeatherWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         super.onEnabled(context);
         LogWrite.Log(context, "start after reboot");
+            StartServices.startBackgroundService(context);
 
-        SharedPreferences sp = getDefaultSharedPreferences(context);
-        int interval = Integer.parseInt(sp.getString("update_frequency", "60")) * 1000 * 60;
-        int startTime = Integer.parseInt(sp.getString("update_start", "0"));
-
-        if(interval>0) {
-
-            LogWrite.Log(context, "start after reboot");
-
-
-
-            Intent intent = new Intent(WeatherWidget.ACTION_AUTO_UPDATE_WIDGET);
-            intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-            Calendar c = Calendar.getInstance();
-            Calendar curentTime = Calendar.getInstance();
-
-            c.set(Calendar.HOUR_OF_DAY, startTime);
-            c.set(Calendar.MINUTE, 1);
-            c.set(Calendar.SECOND, 1);
-            c.set(Calendar.MILLISECOND, 1);
-
-            while (c.before(curentTime))
-                c.add(Calendar.MILLISECOND, interval);
-
-            LogWrite.Log(context, "next start task "+c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DATE) + " " + c.get(Calendar.HOUR_OF_DAY) + ":" +
-                    c.get(Calendar.MINUTE) + ":" + c.get(Calendar.SECOND));
-            AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, alarmIntent);
-        }
     }
 
     @Override
@@ -155,34 +126,20 @@ public class WeatherWidget extends AppWidgetProvider {
                         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                         if (cm == null) {
                             LogWrite.LogError(context, "Отсутствует соединение");
+                        }else {
+                            final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+                            boolean isNetworkConnectedOrConnecting = networkInfo != null && networkInfo.isConnectedOrConnecting();
+
+                            LogWrite.Log(context, "isNetworkConnectedOrConnecting = " + isNetworkConnectedOrConnecting);
+
+                            if (networkInfo != null && isNetworkConnectedOrConnecting) {
+                                LogWrite.Log(context, networkInfo.getTypeName());
+                                new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
+
+                            } else
+                                LogWrite.Log(context, "Not Active Network");
+
                         }
-                        final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-                        boolean isNetworkConnectedOrConnecting = networkInfo != null && networkInfo.isConnectedOrConnecting();
-
-                        LogWrite.Log(context, "isNetworkConnectedOrConnecting = "+isNetworkConnectedOrConnecting);
-
-                        if(networkInfo!=null && isNetworkConnectedOrConnecting) {
-                            LogWrite.Log(context, networkInfo.getTypeName());
-                            new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
-                            /*int countLoad=0;
-                            while(objReceived==null && countLoad<3) {
-                                LogWrite.Log(context, "step = "+countLoad);
-                                objReceived = getWeather(context, Integer.parseInt(sp.getString("timeout", "10")) * 1000);
-                                if(objReceived==null) {
-                                    LogWrite.Log(context, "Thread.sleep(1000)");
-                                    try {
-                                        Thread.sleep(1000);
-                                        LogWrite.Log(context, "end sleep(1000)");
-                                    } catch (InterruptedException e) {
-                                        LogWrite.LogError(context, e.getMessage());
-                                    }
-                                }
-                                countLoad++;
-                            }*/
-                        }else
-                            LogWrite.Log(context, "Not Active Network");
-
-
                     }catch(Exception ep)
                     {
                         LogWrite.LogError(context, ep.getMessage());
@@ -194,11 +151,6 @@ public class WeatherWidget extends AppWidgetProvider {
                 LogWrite.Log(context, "objReceived != null");
                 onUpdate(context, appWidgetManager, appWidgetIds);
             }
-            /*if(objReceived!=null)
-                onUpdate(context, appWidgetManager, appWidgetIds);
-            else
-                LogWrite.Log(context, "objReceived is null");*/
-
         }
         }catch (Exception e) {
             LogWrite.LogError(context, e.getMessage());
@@ -271,9 +223,14 @@ public class WeatherWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
-        Intent intent = new Intent(WeatherWidget.ACTION_AUTO_UPDATE_WIDGET);
-        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.cancel(PendingIntent.getBroadcast(context, 0, intent, 0));
+        Intent alarmIntent = new Intent(context, UpdatesReceiver.class);
+        alarmIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        alarmIntent.setAction("ACTION_AUTO_UPDATE_WIDGET");
+        PendingIntent pendingIntent;
+        pendingIntent = PendingIntent.getBroadcast(context, 121236, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(pendingIntent);
+
     }
 
     class GetWaether extends AsyncTask<String, Void, String> {
@@ -326,68 +283,6 @@ public class WeatherWidget extends AppWidgetProvider {
             }
         }
     }
-    /*@Nullable
-    private static JSONObject getWeather(Context context, int timeout) {
 
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-        StrictMode.setThreadPolicy(policy);
-
-        String urls = "http://lebalex.xyz/lebalexServices/pogoda/meteo.php";
-        String rs = null;
-        LogWrite.Log(context, "getWeather");
-        try {
-            URL url = new URL(urls);
-
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setConnectTimeout(timeout * 1000);
-            urlConnection.setReadTimeout(timeout * 1000);
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-            int responseCode = urlConnection.getResponseCode();
-            LogWrite.Log(context, "responseCode = "+responseCode);
-            if(responseCode == HttpURLConnection.HTTP_OK) {
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                if ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
-                rs = buffer.toString();
-            }
-
-        } catch (Exception eee) {
-            LogWrite.LogError(context, eee.getMessage());
-            rs = null;
-        }
-        if(rs!=null) {
-            String a = "" + (char) 0x00B0;
-            //rs = rs.replaceAll("u0026deg;", a);
-            rs = rs.replaceAll("&deg;", a);
-            rs = rs.replaceAll("&nbsp;"," ");
-            try {
-                JSONArray jsonArray = new JSONArray(rs);
-                int notNaN=-1;
-                for (int i=0;i<jsonArray.length();i++) {
-                    JSONObject json = jsonArray.getJSONObject(i);
-                    if (!json.getString("temp").equals("NaN")) {
-                        if (notNaN < 0)
-                            notNaN = i;
-                    }
-                }
-                return jsonArray.getJSONObject((notNaN==-1)?0:notNaN);
-            }catch(Exception e)
-            {
-                return null;
-            }
-        }else {
-            LogWrite.LogError(context, "rs is null");
-            return null;
-        }
-
-
-    }*/
 
 }

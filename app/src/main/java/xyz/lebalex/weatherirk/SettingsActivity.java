@@ -188,19 +188,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
-            bindPreferenceSummaryToValue(findPreference("update_frequency"));
+            ListPreference listUpdateFrequency = (ListPreference) findPreference("update_frequency");
+
+            bindPreferenceSummaryToValue(listUpdateFrequency);
             bindPreferenceSummaryToValue(findPreference("update_start"));
             //bindPreferenceSummaryToValue(findPreference("timeout"));
 
             ListPreference listPreference = (ListPreference) findPreference("place_temp");
             setListPreferenceData(listPreference);
-            /*listPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                public boolean onPreferenceClick(Preference preference) {
-                    //open browser or intent here
-                }
-            });*/
-
             bindPreferenceSummaryToValue(findPreference("place_temp"));
+
+
+
+
+
 
         }
         protected static void setListPreferenceData(ListPreference lp) {
