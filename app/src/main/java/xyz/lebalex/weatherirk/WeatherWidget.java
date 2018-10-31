@@ -69,6 +69,7 @@ public class WeatherWidget extends AppWidgetProvider {
     public static String ACTION_AUTO_UPDATE_WIDGET = "ACTION_AUTO_UPDATE_WIDGET";
     public static String ACTION_USER_PRESENT = "android.intent.action.USER_PRESENT";
     public static String ACTION_APPWIDGET_ENABLED = "android.appwidget.action.APPWIDGET_ENABLED";
+    public static String APPWIDGET_UPDATE = "android.appwidget.action.APPWIDGET_UPDATE";
     private Context context;
     private AppWidgetManager appWidgetManager;
     private int[] appWidgetIds;
@@ -100,6 +101,7 @@ public class WeatherWidget extends AppWidgetProvider {
         sp = getDefaultSharedPreferences(context);
         try {
         if (ACTION_AUTO_UPDATE_WIDGET.equalsIgnoreCase(intent.getAction()) || ACTION_APPWIDGET_ENABLED.equalsIgnoreCase(intent.getAction())
+                || APPWIDGET_UPDATE.equalsIgnoreCase(intent.getAction())
                 || (ACTION_USER_PRESENT.equalsIgnoreCase(intent.getAction()) && !sp.getBoolean("last_time", false))
                 ) {
             SharedPreferences.Editor editor = sp.edit();
@@ -114,7 +116,7 @@ public class WeatherWidget extends AppWidgetProvider {
             if(objReceived == null){
                 LogWrite.Log(context,"objReceived == null");
                 int startH = Integer.parseInt(sp.getString("update_start", "0"));
-                if(ACTION_APPWIDGET_ENABLED.equalsIgnoreCase(intent.getAction()))
+                if(ACTION_APPWIDGET_ENABLED.equalsIgnoreCase(intent.getAction()) || APPWIDGET_UPDATE.equalsIgnoreCase(intent.getAction()))
                     startH=0;
                 if (calen.get(Calendar.HOUR_OF_DAY) >=startH)
                 {

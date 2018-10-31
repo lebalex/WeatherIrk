@@ -4,6 +4,7 @@ package xyz.lebalex.weatherirk;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -18,10 +19,13 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 
 import java.util.List;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -45,6 +49,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
+            if(preference.getKey().equals("update_frequency")) {
+                SharedPreferences sp = getDefaultSharedPreferences(preference.getContext());
+                if (!stringValue.equals(sp.getString("update_frequency", "60")))
+                    StartServices.startBackgroundService(preference.getContext(), stringValue);
+            }
 
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
@@ -117,6 +126,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
+
+
+
     }
 
     @Override
@@ -188,9 +200,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
-            ListPreference listUpdateFrequency = (ListPreference) findPreference("update_frequency");
 
-            bindPreferenceSummaryToValue(listUpdateFrequency);
+            bindPreferenceSummaryToValue(findPreference("update_frequency"));
             bindPreferenceSummaryToValue(findPreference("update_start"));
             //bindPreferenceSummaryToValue(findPreference("timeout"));
 
@@ -199,7 +210,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("place_temp"));
 
 
-
+            /*listUpdateFrequency.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    StartServices.startBackgroundService(getActivity());
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), "");
+                    LogWrite.Log(getActivity(), "startBackgroundService");
+                    return true;
+                }
+            });*/
 
 
 

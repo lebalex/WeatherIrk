@@ -12,13 +12,17 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class StartServices {
     private static boolean debug=false;
-
     public static void startBackgroundService(Context ctx) {
+        startBackgroundService(ctx, getDefaultSharedPreferences(ctx).getString("update_frequency", "60"));
+    }
+
+    public static void startBackgroundService(Context ctx, String intervalStr) {
         try {
 
-            SharedPreferences sp = getDefaultSharedPreferences(ctx);
-            int interval = Integer.parseInt(sp.getString("update_frequency", "60")) * 1000 * 60;
-            int startTime = Integer.parseInt(sp.getString("update_start", "0"));
+            //SharedPreferences sp = getDefaultSharedPreferences(ctx);
+            //int interval = Integer.parseInt(sp.getString("update_frequency", "60")) * 1000 * 60;
+            int interval = Integer.parseInt(intervalStr) * 1000 * 60;
+            //int startTime = Integer.parseInt(sp.getString("update_start", "0"));
 
             Intent alarmIntent = new Intent(ctx, UpdatesReceiver.class);
             alarmIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
