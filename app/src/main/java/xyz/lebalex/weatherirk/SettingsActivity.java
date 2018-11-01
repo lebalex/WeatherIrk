@@ -72,6 +72,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         int ids[] = AppWidgetManager.getInstance(preference.getContext()).getAppWidgetIds(new ComponentName(preference.getContext(), WeatherWidget.class));
                         if (ids.length > 0) {
                             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                            final Bundle bundle = new Bundle();
+                            JSONObject[] entries = MainActivity.getEntries();
+                            bundle.putBinder("object_value", new ObjectWrapperForBinder(entries[Integer.parseInt(stringValue)]));
+                            intent.putExtras(bundle);
                             preference.getContext().sendBroadcast(intent);
                         }
                     } catch (Exception e) {
