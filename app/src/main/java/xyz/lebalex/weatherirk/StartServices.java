@@ -11,7 +11,7 @@ import java.util.Calendar;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class StartServices {
-    private static boolean debug=false;
+    private static boolean debug=true;
     public static void startBackgroundService(Context ctx) {
         startBackgroundService(ctx, getDefaultSharedPreferences(ctx).getString("update_frequency", "60"));
     }

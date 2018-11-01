@@ -274,7 +274,23 @@ public class WeatherWidget extends AppWidgetProvider {
                 try {
                     JSONArray jsonArray = new JSONArray(result);
 
-                    objReceived=jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")));
+
+                    JSONObject json_w = jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")));
+                    if(json_w.getString("temp").contains("NaN")) {
+                    int i=0;
+                    json_w = null;
+                    while (i<jsonArray.length() && json_w == null)
+                        {
+                            JSONObject json = jsonArray.getJSONObject(i);
+                            String val = json.getString("temp");
+                            if(!val.contains("NaN")) {
+                                json_w = jsonArray.getJSONObject(i);
+                            }
+                            i++;
+                        }
+                    }
+
+                    objReceived=json_w;
                     onUpdate(context, appWidgetManager, appWidgetIds);
 
                 }catch(Exception e){

@@ -2,6 +2,8 @@ package xyz.lebalex.weatherirk;
 
 
 import android.annotation.TargetApi;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +25,9 @@ import android.util.Log;
 import android.view.MenuItem;
 
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -53,6 +58,25 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 SharedPreferences sp = getDefaultSharedPreferences(preference.getContext());
                 if (!stringValue.equals(sp.getString("update_frequency", "60")))
                     StartServices.startBackgroundService(preference.getContext(), stringValue);
+            }
+            if(preference.getKey().equals("place_temp")) {
+                SharedPreferences sp = getDefaultSharedPreferences(preference.getContext());
+                if (!stringValue.equals(sp.getString("place_temp", "0"))) {
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("place_temp", stringValue);
+                    editor.commit();
+
+                    try {
+                        Intent intent = new Intent(preference.getContext(), WeatherWidget.class);
+                        intent.setAction("ACTION_AUTO_UPDATE_WIDGET");
+                        int ids[] = AppWidgetManager.getInstance(preference.getContext()).getAppWidgetIds(new ComponentName(preference.getContext(), WeatherWidget.class));
+                        if (ids.length > 0) {
+                            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                            preference.getContext().sendBroadcast(intent);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
 
             if (preference instanceof ListPreference) {
@@ -226,14 +250,26 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         }
         protected static void setListPreferenceData(ListPreference lp) {
-            CharSequence[] entries = MainActivity.getEntries();
-            CharSequence[] entryValues = new String[entries.length];
-            for (int i=0;i<entries.length;i++)
-                entryValues[i]=Integer.toString(i);
+            JSONObject[] entries = MainActivity.getEntries();
+            //CharSequence[] entryValues = new String[entries.length];
+            //CharSequence[] entryNameValues = new String[entries.length];
+            List<String> entryValues = new ArrayList<>();
+            List<String> entryNameValues = new ArrayList<String>();
+            int j=0;
+            for (int i=0;i<entries.length;i++) {
+                //entryValues[j] = Integer.toString(i);
+                //entryNameValues[i] = entries[i];
+                try {
+                    if (!entries[i].getString("temp").contains("NaN")) {
+                        entryNameValues.add(entries[i].getString("where"));
+                        entryValues.add(Integer.toString(i));
+                    }
+                }catch(Exception e){}
+            }
 
-            lp.setEntries(entries);
+            lp.setEntries(entryNameValues.toArray(new CharSequence[entryNameValues.size()]));
             lp.setDefaultValue("0");
-            lp.setEntryValues(entryValues);
+            lp.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
         }
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {

@@ -41,6 +41,8 @@ import java.net.URL;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -58,7 +60,7 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 public class MainActivity extends AppCompatActivity {
     private GridLayout gridlayout;
     private ProgressBar progressBar3;
-    private static CharSequence[] entries;
+    private static JSONObject[] entries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,25 +189,34 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject dataJsonObj = null;
 
                 try {
+                    SharedPreferences sp = getDefaultSharedPreferences(getApplication());
                     JSONArray jsonArray = new JSONArray(result);
-                    entries = new String[jsonArray.length()];
+                    entries = new JSONObject[jsonArray.length()];
+                    int id_notNan=-1;
                     for (int i=0;i<jsonArray.length();i++)
                     {
                         JSONObject json = jsonArray.getJSONObject(i);
                         String where = json.getString("where");
                         String val = json.getString("temp");
-                        setValue(gridlayout, where, val, i);
-                        entries[i] = where;
-
+                        entries[i]=json;
+                        if(!val.contains("NaN")) {
+                            setValue(gridlayout, where, val, i);
+                            if(id_notNan<0)
+                                id_notNan=i;
+                        }
                     }
+                    JSONObject json_w = jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")));
+                    if(json_w.getString("temp").contains("NaN"))
+                        json_w=jsonArray.getJSONObject(id_notNan);
+
                     Intent intent = new Intent(getApplicationContext(), WeatherWidget.class);
                     intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
                     int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
                     if(ids.length>0) {
                         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
                         final Bundle bundle = new Bundle();
-                        SharedPreferences sp = getDefaultSharedPreferences(getApplication());
-                        bundle.putBinder("object_value", new ObjectWrapperForBinder(jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")))));
+
+                        bundle.putBinder("object_value", new ObjectWrapperForBinder(json_w));
                         intent.putExtras(bundle);
                         sendBroadcast(intent);
                     }
@@ -220,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static CharSequence[] getEntries() {
+    public static JSONObject[] getEntries() {
         return entries;
     }
 
