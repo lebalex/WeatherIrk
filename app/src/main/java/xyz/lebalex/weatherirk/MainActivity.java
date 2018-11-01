@@ -5,9 +5,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +26,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +46,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+
+import static android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_DISABLED;
+import static android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED;
+import static android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_WHITELISTED;
 
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -84,8 +92,24 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sp = getDefaultSharedPreferences(this);
         new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
 
-
-
+///////////////
+/*        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.isActiveNetworkMetered()) {
+            switch (connectivityManager.getRestrictBackgroundStatus()) {
+                case RESTRICT_BACKGROUND_STATUS_ENABLED:
+                    Toast.makeText(getApplication(), "Enabled Data Saver.", Toast.LENGTH_SHORT).show();
+                    break;
+                case RESTRICT_BACKGROUND_STATUS_WHITELISTED:
+                    Toast.makeText(getApplication(), "The app is whitelisted.", Toast.LENGTH_SHORT).show();
+                    break;
+                case RESTRICT_BACKGROUND_STATUS_DISABLED:
+                    Toast.makeText(getApplication(), "Disabled Data Saver.", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else {
+            Toast.makeText(getApplication(), "The device is not on a metered network.", Toast.LENGTH_SHORT).show();
+        }
+*/
 
     }
     private void setValue(GridLayout gridlayout, String where, String val, int i)
@@ -226,7 +250,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             return true;
         }*/
-
+        /*if (id == R.id.action_backgroundStatus) {
+            Intent intent = new Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS, Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+            return true;
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

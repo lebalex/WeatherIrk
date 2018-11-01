@@ -9,8 +9,8 @@ android {
         minSdkVersion 19
 
         targetSdkVersion 26
-        versionCode 159
-        versionName "1.5.9"
+        versionCode 162
+        versionName "1.6.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "weather-$versionName")
     }

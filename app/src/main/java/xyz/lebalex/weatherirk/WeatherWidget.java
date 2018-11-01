@@ -125,23 +125,21 @@ public class WeatherWidget extends AppWidgetProvider {
                     PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WeatherWidget");*/
                     try {
                         /*wl.acquire();*/
-                        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        /*ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                         if (cm == null) {
                             LogWrite.LogError(context, "Отсутствует соединение");
                         }else {
                             final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
                             boolean isNetworkConnectedOrConnecting = networkInfo != null && networkInfo.isConnectedOrConnecting();
-
                             LogWrite.Log(context, "isNetworkConnectedOrConnecting = " + isNetworkConnectedOrConnecting);
-
                             if (networkInfo != null && isNetworkConnectedOrConnecting) {
                                 LogWrite.Log(context, networkInfo.getTypeName());
-                                new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
-
                             } else
                                 LogWrite.Log(context, "Not Active Network");
+                        }*/
 
-                        }
+
+                        new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
                     }catch(Exception ep)
                     {
                         LogWrite.LogError(context, ep.getMessage());
@@ -244,6 +242,7 @@ public class WeatherWidget extends AppWidgetProvider {
             try {
                 URL url = new URL(params[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.connect();
                 int code = urlConnection.getResponseCode();
                 if(code==200){
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());

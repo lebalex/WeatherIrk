@@ -18,6 +18,7 @@ public class LogWrite {
             WriteLog(pContext, str);
         }*/
         //Log.i("LogWrite", str);
+        //WriteLog(pContext, str);
     }
     public static void LogError(Context pContext, String str) {
         //WriteLog(pContext, str);
