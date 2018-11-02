@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        MobileAds.initialize(this, "ca-app-pub-6392397454770928/1263238767");
+        MobileAds.initialize(this, "ca-app-pub-6392397454770928~3042427784");
 
 
         AdView mAdView = (AdView) findViewById(R.id.adView);
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         gridlayout = (GridLayout ) findViewById(R.id.grid);
         progressBar3 = (ProgressBar ) findViewById(R.id.progressBar3);
 
-        //StartServices.startBackgroundService(this);
+        StartServices.startBackgroundService(this);
 
         SharedPreferences sp = getDefaultSharedPreferences(this);
         new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
@@ -209,17 +209,16 @@ public class MainActivity extends AppCompatActivity {
                     if(json_w.getString("temp").contains("NaN"))
                         json_w=jsonArray.getJSONObject(id_notNan);
 
-                    Intent intent = new Intent(getApplicationContext(), WeatherWidget.class);
-                    intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-                    int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
-                    if(ids.length>0) {
-                        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-                        final Bundle bundle = new Bundle();
 
-                        bundle.putBinder("object_value", new ObjectWrapperForBinder(json_w));
-                        intent.putExtras(bundle);
-                        sendBroadcast(intent);
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplication());
+                    int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
+                    if (ids.length > 0) {
+                        for (int id : ids) {
+                            new WidgetHelper().updateWidget(getApplication(), appWidgetManager, id, json_w);
+                        }
                     }
+
+
 
                 }catch(Exception e){
                     LogWrite.LogError(getApplicationContext(), e.getMessage());

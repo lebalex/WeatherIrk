@@ -18,11 +18,7 @@ public class StartServices {
 
     public static void startBackgroundService(Context ctx, String intervalStr) {
         try {
-
-            //SharedPreferences sp = getDefaultSharedPreferences(ctx);
-            //int interval = Integer.parseInt(sp.getString("update_frequency", "60")) * 1000 * 60;
-            int interval = Integer.parseInt(intervalStr) * 1000 * 60;
-            //int startTime = Integer.parseInt(sp.getString("update_start", "0"));
+            int interval = Integer.parseInt(intervalStr);
 
             Intent alarmIntent = new Intent(ctx, UpdatesReceiver.class);
             alarmIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
@@ -32,20 +28,13 @@ public class StartServices {
             AlarmManager manager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
 
             Calendar startCalen = Calendar.getInstance();
-            //Calendar curentTime = Calendar.getInstance();
             if(debug) {
-                startCalen.add(Calendar.MINUTE, 1);
+                startCalen.add(Calendar.MINUTE, 10);
             }else {
-                startCalen.add(Calendar.MILLISECOND, interval);
-                /*startCalen.set(Calendar.HOUR_OF_DAY, startTime);
-                startCalen.set(Calendar.MINUTE, 1);
-                startCalen.set(Calendar.SECOND, 1);
-                startCalen.set(Calendar.MILLISECOND, 1);*/
+                startCalen.add(Calendar.MINUTE, interval);
             }
-            /*while (startCalen.before(curentTime))
-                startCalen.add(Calendar.MILLISECOND, interval);*/
-
             manager.setExact(AlarmManager.RTC_WAKEUP, startCalen.getTimeInMillis(), pendingIntent);
+            LogWrite.Log(ctx, "started: "+startCalen.get(Calendar.HOUR_OF_DAY) + ":" +startCalen.get(Calendar.MINUTE) + ":" + startCalen.get(Calendar.SECOND));
         }catch (Exception e)
         {
             LogWrite.Log(ctx, e.getMessage());

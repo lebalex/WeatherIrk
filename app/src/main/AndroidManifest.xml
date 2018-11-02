@@ -49,13 +49,6 @@
             android:label="Погода Иркутск">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="ACTION_AUTO_UPDATE_WIDGET" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <category android:name="android.intent.category.HOME" />
-
-
             </intent-filter>
 
             <meta-data
@@ -68,9 +61,6 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="ACTION_AUTO_UPDATE_WIDGET" />
-                <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <category android:name="android.intent.category.HOME" />
@@ -78,7 +68,9 @@
         </receiver>
 
 
-
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6392397454770928~3042427784"/>
     </application>
 
 </manifest>

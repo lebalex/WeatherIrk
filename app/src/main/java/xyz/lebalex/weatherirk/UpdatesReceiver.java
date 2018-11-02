@@ -5,6 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+
+import java.util.Calendar;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class UpdatesReceiver extends BroadcastReceiver {
 
@@ -13,8 +18,13 @@ public class UpdatesReceiver extends BroadcastReceiver {
     {
         try {
             StartServices.startBackgroundService(context);
-            if (intent != null)
-                doWork(context, intent.getAction());
+            if (intent != null) {
+                Calendar calen = Calendar.getInstance();
+                SharedPreferences sp = getDefaultSharedPreferences(context);
+                if (calen.get(Calendar.HOUR_OF_DAY) >= Integer.parseInt(sp.getString("update_start", "0")))
+                    doWork(context, intent.getAction());
+
+            }
         }catch(Exception e)
         {
             LogWrite.Log(context, e.getMessage());
@@ -24,17 +34,17 @@ public class UpdatesReceiver extends BroadcastReceiver {
     private void doWork(Context ctx, String action)
     {
         try {
-            LogWrite.Log(ctx, action);
-            Intent intent = new Intent(ctx, WeatherWidget.class);
-            intent.setAction("ACTION_AUTO_UPDATE_WIDGET");
-            int ids[] = AppWidgetManager.getInstance(ctx).getAppWidgetIds(new ComponentName(ctx, WeatherWidget.class));
-            if(ids.length>0) {
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-                ctx.sendBroadcast(intent);
+            LogWrite.Log(ctx, "doWork:"+action);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(ctx);
+            int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(ctx, WeatherWidget.class));
+            if (ids.length > 0) {
+                for (int id : ids) {
+                    new WidgetHelper().updateWidget(ctx, appWidgetManager, id);
+                }
             }
         }catch(Exception e)
         {
-            LogWrite.Log(ctx, e.getMessage());
+            LogWrite.Log(ctx, "doWork:"+e.getMessage());
         }
     }
 

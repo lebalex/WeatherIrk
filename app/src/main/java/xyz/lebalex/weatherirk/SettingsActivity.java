@@ -67,16 +67,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     editor.commit();
 
                     try {
-                        Intent intent = new Intent(preference.getContext(), WeatherWidget.class);
-                        intent.setAction("ACTION_AUTO_UPDATE_WIDGET");
-                        int ids[] = AppWidgetManager.getInstance(preference.getContext()).getAppWidgetIds(new ComponentName(preference.getContext(), WeatherWidget.class));
+                        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(preference.getContext());
+                        int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(preference.getContext(), WeatherWidget.class));
                         if (ids.length > 0) {
-                            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-                            final Bundle bundle = new Bundle();
                             JSONObject[] entries = MainActivity.getEntries();
-                            bundle.putBinder("object_value", new ObjectWrapperForBinder(entries[Integer.parseInt(stringValue)]));
-                            intent.putExtras(bundle);
-                            preference.getContext().sendBroadcast(intent);
+                            for (int id : ids) {
+                                new WidgetHelper().updateWidget(preference.getContext(), appWidgetManager, id, entries[Integer.parseInt(stringValue)]);
+                            }
                         }
                     } catch (Exception e) {
                     }

@@ -17,8 +17,8 @@ public class LogWrite {
         if (sp.getBoolean("save_log", false)) {
             WriteLog(pContext, str);
         }*/
-        //Log.i("LogWrite", str);
         //WriteLog(pContext, str);
+        //Log.i("LogWrite", str);
     }
     public static void LogError(Context pContext, String str) {
         //WriteLog(pContext, str);
