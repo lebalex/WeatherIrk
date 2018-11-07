@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "345753779455",
+    "firebase_url": "https://birthdays-3a018.firebaseio.com",
+    "project_id": "birthdays-3a018",
+    "storage_bucket": "birthdays-3a018.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345753779455:android:ad8c4426fe11efa0",
+        "android_client_info": {
+          "package_name": "xyz.lebalex.birthdays"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345753779455-pogovhvfe4gaphoi8kvatm80o99bsb1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWbhsASJSnyAOe8c_EUCPN8aXVbKBtYiE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-6392397454770928~1864904493"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345753779455:android:c6ce1bd2b22596ce",
+        "android_client_info": {
+          "package_name": "xyz.lebalex.daytask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345753779455-pogovhvfe4gaphoi8kvatm80o99bsb1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWbhsASJSnyAOe8c_EUCPN8aXVbKBtYiE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-6392397454770928~5034042594"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345753779455:android:48fe70074d362d40",
+        "android_client_info": {
+          "package_name": "xyz.lebalex.weatherirk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345753779455-pogovhvfe4gaphoi8kvatm80o99bsb1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWbhsASJSnyAOe8c_EUCPN8aXVbKBtYiE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-6392397454770928~3042427784"
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -92,7 +92,16 @@ public class WeatherWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+
+        RemoteViews widgetView = new RemoteViews(context.getPackageName(),
+                R.layout.widget);
+
+        widgetView.setViewVisibility(R.id.updateBar, View.GONE);
+        widgetView.setViewVisibility(R.id.indeterminateBar, View.VISIBLE);
+
+
         for (int i : appWidgetIds) {
+            appWidgetManager.updateAppWidget(i, widgetView);
             new WidgetHelper().updateWidget(context, appWidgetManager, i);
         }
     }

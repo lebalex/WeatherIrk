@@ -9,8 +9,8 @@ android {
         minSdkVersion 19
 
         targetSdkVersion 27
-        versionCode 171
-        versionName "1.7.1"
+        versionCode 173
+        versionName "1.7.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "weather-$versionName")
     }
@@ -32,7 +32,8 @@ dependencies {
     implementation 'com.android.support:customtabs:27.+'
     implementation 'com.android.support.constraint:constraint-layout:+'
     implementation 'com.android.support:design:27.+'
-
     implementation 'com.google.android.gms:play-services-ads:17.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
 
 }
+apply plugin: 'com.google.gms.google-services'

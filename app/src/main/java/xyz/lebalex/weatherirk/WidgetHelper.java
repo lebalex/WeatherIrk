@@ -2,10 +2,14 @@ package xyz.lebalex.weatherirk;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
+import android.util.TypedValue;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
@@ -106,9 +110,18 @@ public class WidgetHelper {
             RemoteViews widgetView = new RemoteViews(ctx.getPackageName(),
                     R.layout.widget);
 
+            widgetView.setViewVisibility(R.id.indeterminateBar, View.GONE);
+            widgetView.setViewVisibility(R.id.updateBar, View.VISIBLE);
 
-            widgetView.setTextViewText(R.id.where, json.getString("where"));
+            String where=json.getString("where");
+            if(where.length()>8)
+                widgetView.setTextViewTextSize(R.id.where, TypedValue.COMPLEX_UNIT_DIP, 14);
+            else
+                widgetView.setTextViewTextSize(R.id.where, TypedValue.COMPLEX_UNIT_DIP, 16);
+            widgetView.setTextViewText(R.id.where, where);
             widgetView.setTextViewText(R.id.temp, json.getString("temp"));
+
+
             Calendar calen = Calendar.getInstance();
 
             String minute = "" + calen.get(Calendar.MINUTE);
@@ -126,7 +139,27 @@ public class WidgetHelper {
             widgetView.setOnClickPendingIntent(R.id.where, pIntent);
             widgetView.setOnClickPendingIntent(R.id.temp, pIntent);
 
+
+
+            /*Intent intent1 = new Intent(context, MyWidgetProvider.class);
+            intent1.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            intent1.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context,
+                    0, intent1, 0);
+            */
+            int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(ctx, WeatherWidget.class));
+            Intent updateIntent = new Intent(ctx, WeatherWidget.class);
+            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            PendingIntent pIntentUpdate = PendingIntent.getBroadcast(ctx, 0,
+                    updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+            widgetView.setOnClickPendingIntent(R.id.updateBar, pIntentUpdate);
+
+
             appWidgetManager.updateAppWidget(widgetID, widgetView);
+
             LogWrite.Log(ctx, "updateWidget complite");
         }catch(Exception e)
         {
