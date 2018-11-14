@@ -58,10 +58,10 @@ public class WidgetHelper {
                 return result;
             } catch (MalformedURLException e) {
                 LogWrite.Log(context,  "http1: "+e.getMessage());
-                StartServices.startBackgroundService(context,"10");
+                //StartServices.startBackgroundService(context,"10");
             } catch (IOException e) {
                 LogWrite.Log(context,  "http1: "+e.getMessage());
-                StartServices.startBackgroundService(context, "10");
+                //StartServices.startBackgroundService(context, "10");
             }
             finally {
                 urlConnection.disconnect();
@@ -171,7 +171,8 @@ public class WidgetHelper {
         this.context = ctx;
         this.appWidgetManager = appWidgetManager;
         this.widgetID = widgetID;
-        new GetWaether().execute(new String[]{"http://lebalex.xyz/lebalexServices/pogoda/meteo.php"});
+        SharedPreferences sp = getDefaultSharedPreferences(ctx);
+        new GetWaether().execute(new String[]{sp.getString("meteo_url","")});
 
 
     }
