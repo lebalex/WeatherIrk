@@ -172,7 +172,8 @@ public class WidgetHelper {
         this.appWidgetManager = appWidgetManager;
         this.widgetID = widgetID;
         SharedPreferences sp = getDefaultSharedPreferences(ctx);
-        new GetWaether().execute(new String[]{sp.getString("meteo_url","")});
+        //if(sp.getString("meteo_url",null)!=null)
+            new GetWaether().execute(new String[]{sp.getString("meteo_url","http://lebalex.xyz/api/meteo")});
 
 
     }

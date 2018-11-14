@@ -34,4 +34,6 @@
     <string name="pref_header_general">Основные</string>
     <string name="pref_title_timeout">Time Out Соединения (сек)</string>
     <string name="action_backgroundStatus">Разрешения</string>
+    <string name="error">Ошибка</string>
+    <string name="not_data">Нет данных</string>
 </resources>

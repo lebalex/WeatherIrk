@@ -2,10 +2,12 @@ package xyz.lebalex.weatherirk;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -40,6 +42,20 @@ public class MainActivity extends AppCompatActivity {
     private GridLayout gridlayout;
     private ProgressBar progressBar3;
     private static JSONObject[] entries;
+    private void MessageBox(String error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.error)
+                .setMessage(error)
+                .setCancelable(false)
+                .setNegativeButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +87,14 @@ public class MainActivity extends AppCompatActivity {
         StartServices.startBackgroundService(this);
 
         SharedPreferences sp = getDefaultSharedPreferences(this);
-        new GetWaether().execute(new String[]{sp.getString("meteo_url","")});
+        if(sp.getString("meteo_url",null)!=null)
+            new GetWaether().execute(new String[]{sp.getString("meteo_url",null)});
+        else
+        {
+            progressBar3.setVisibility(View.GONE);
+            MessageBox(getResources().getString(R.string.not_data));
+        }
+
 
 ///////////////
 /*        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
