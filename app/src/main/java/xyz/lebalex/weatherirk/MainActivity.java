@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(getApplication(), "The device is not on a metered network.", Toast.LENGTH_SHORT).show();
-        }
+        }angddd
 */
 
     }
