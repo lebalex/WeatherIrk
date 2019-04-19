@@ -23,7 +23,7 @@ import java.net.URLConnection;
 public class SplashActivity extends Activity {
 
     private static int SPLASH_TIME_OUT = 2000;
-    private String url = "http://lebalex.xyz/meteo.json";
+    private String url = "https://www.lebalex.xyz/meteo.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -250,24 +250,29 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
 
         }
-        protected static void setListPreferenceData(ListPreference lp) {
+        protected void setListPreferenceData(ListPreference lp) {
             JSONObject[] entries = MainActivity.getEntries();
             //CharSequence[] entryValues = new String[entries.length];
             //CharSequence[] entryNameValues = new String[entries.length];
             List<String> entryValues = new ArrayList<>();
             List<String> entryNameValues = new ArrayList<String>();
             int j=0;
+            try {
             for (int i=0;i<entries.length;i++) {
                 //entryValues[j] = Integer.toString(i);
                 //entryNameValues[i] = entries[i];
-                try {
+
                     if (!entries[i].getString("temp").contains("NaN")) {
                         entryNameValues.add(entries[i].getString("where"));
                         entryValues.add(Integer.toString(i));
                     }
-                }catch(Exception e){}
+
             }
 
+            }catch(Exception e){
+                entryNameValues.add(getResources().getString(R.string.not_data));
+                entryValues.add("0");
+            }
             lp.setEntries(entryNameValues.toArray(new CharSequence[entryNameValues.size()]));
             lp.setDefaultValue("0");
             lp.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
