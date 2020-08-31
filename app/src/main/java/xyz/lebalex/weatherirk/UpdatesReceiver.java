@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 
 import java.util.Calendar;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class UpdatesReceiver extends BroadcastReceiver {
 
@@ -17,10 +16,11 @@ public class UpdatesReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent)
     {
         try {
-            StartServices.startBackgroundService(context);
+            SharedPreferences sp = context.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+            StartServices.startBackgroundService(context, sp.getString("update_frequency", "60"));
             if (intent != null) {
                 Calendar calen = Calendar.getInstance();
-                SharedPreferences sp = getDefaultSharedPreferences(context);
                 if (calen.get(Calendar.HOUR_OF_DAY) >= Integer.parseInt(sp.getString("update_start", "0")))
                     doWork(context, intent.getAction());
 

@@ -6,8 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
-import android.os.AsyncTask;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -15,24 +13,18 @@ import android.widget.RemoteViews;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Calendar;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class WidgetHelper {
     private Context context;
     private AppWidgetManager appWidgetManager;
     private int widgetID;
 
-    class GetWaether extends AsyncTask<String, Void, String> {
+    /*class GetWaether extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -101,7 +93,7 @@ public class WidgetHelper {
 
             }
         }
-    }
+    }*/
     public void updateWidget(Context ctx, AppWidgetManager appWidgetManager,
                               int widgetID, JSONObject json)
     {
@@ -166,14 +158,61 @@ public class WidgetHelper {
             LogWrite.LogError(ctx, e.getMessage());
         }
     }
+    private String getWaether(Context context, final String urls)
+    {
+        String result="";
+        try{
+            final ExecutorService executor = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+            Future<String> future;
+            future = executor.submit(new HttpRunningTask(context,urls));
+            result = future.get(50, TimeUnit.SECONDS);
+        }
+        catch(Exception e)
+        {
+            LogWrite.LogError(context, e.getMessage());
+        }
+        finally {
+            return result;
+        }
+    }
+
     public void updateWidget(Context ctx, AppWidgetManager appWidgetManager,
                                     int widgetID) {
         this.context = ctx;
         this.appWidgetManager = appWidgetManager;
         this.widgetID = widgetID;
-        SharedPreferences sp = getDefaultSharedPreferences(ctx);
+        SharedPreferences sp = ctx.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
         //if(sp.getString("meteo_url",null)!=null)
-            new GetWaether().execute(new String[]{sp.getString("meteo_url","http://lebalex.xyz/api/meteo")});
+            //new GetWaether().execute(new String[]{sp.getString("meteo_url","http://lebalex.xyz/api/meteo")});
+        String result = getWaether(context, sp.getString("meteo_url","http://lebalex.xyz/api/meteo"));
+        if(result!="") {
+            JSONObject dataJsonObj = null;
+            try {
+                LogWrite.Log(context, "result:"+result);
+                JSONArray jsonArray = new JSONArray(result);
+                JSONObject json_w = jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")));
+                if(json_w.getString("temp").contains("NaN")) {
+                    int i=0;
+                    json_w = null;
+                    while (i<jsonArray.length() && json_w == null)
+                    {
+                        JSONObject json = jsonArray.getJSONObject(i);
+                        String val = json.getString("temp");
+                        if(!val.contains("NaN")) {
+                            json_w = jsonArray.getJSONObject(i);
+                        }
+                        i++;
+                    }
+                }
+                LogWrite.Log(context,  json_w.toString());
+                updateWidget(context, appWidgetManager,widgetID, json_w);
+
+            }catch(Exception e){
+                LogWrite.LogError(context, e.getMessage());
+            }
+
+        }
+
 
 
     }

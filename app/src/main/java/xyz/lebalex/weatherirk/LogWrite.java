@@ -2,8 +2,7 @@ package xyz.lebalex.weatherirk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
+
 
 import java.util.Calendar;
 
@@ -13,7 +12,7 @@ import java.util.Calendar;
 
 public class LogWrite {
     public static void Log(Context pContext, String str) {
-        /*SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(pContext);
+        /*SharedPreferences sp = pContext.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
         if (sp.getBoolean("save_log", false)) {
             WriteLog(pContext, str);
         }*/
@@ -29,7 +28,7 @@ public class LogWrite {
     {
         try {
             //Log.i("LogWrite", str);
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(pContext);
+            SharedPreferences sp = pContext.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
                 Calendar calen = Calendar.getInstance();
                 int c = calen.get(Calendar.DATE);
                 String logs = sp.getString("logs", "");

@@ -1,47 +1,33 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
-        android:defaultValue="180"
-        android:entries="@array/pref_sync_frequency_titles"
-        android:entryValues="@array/pref_sync_frequency_values"
-        android:key="update_frequency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_update_frequency" />
+        app:defaultValue="180"
+        app:summary="%1$s"
+        app:entries="@array/pref_sync_frequency_titles"
+        app:entryValues="@array/pref_sync_frequency_values"
+        app:key="update_frequency"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_title_update_frequency" />
 
     <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_update_start"
-        android:inputType="numberSigned"
-        android:key="update_start"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_update_start" />
+        app:defaultValue="@string/pref_default_update_start"
+        app:key="update_start"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_title_update_start" />
 
     <ListPreference
-        android:defaultValue="0"
-        android:key="place_temp"
-        android:title="Район на виджете"
+        app:defaultValue="0"
+        app:key="place_temp"
+        app:summary="%1$s"
+        app:useSimpleSummaryProvider="true"
+        app:title="Район на виджете"
         />
 
-    <!--SwitchPreference
-        android:defaultValue="false"
-        android:key="save_log"
-        android:summary=""
-        android:title="@string/save_log_Title" />
 
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="10"
-        android:inputType="numberSigned"
-        android:key="timeout"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_timeout" /-->
 
 
 </PreferenceScreen>

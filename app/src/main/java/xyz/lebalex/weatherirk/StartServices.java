@@ -8,16 +8,19 @@ import android.content.SharedPreferences;
 
 import java.util.Calendar;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class StartServices {
     private static boolean debug=false;
-    public static void startBackgroundService(Context ctx) {
+    private static SharedPreferences sp;
+
+    /*public static void startBackgroundService(Context ctx) {
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
         startBackgroundService(ctx, getDefaultSharedPreferences(ctx).getString("update_frequency", "60"));
-    }
+    }*/
 
     public static void startBackgroundService(Context ctx, String intervalStr) {
         try {
+
             int interval = Integer.parseInt(intervalStr);
 
             Intent alarmIntent = new Intent(ctx, UpdatesReceiver.class);

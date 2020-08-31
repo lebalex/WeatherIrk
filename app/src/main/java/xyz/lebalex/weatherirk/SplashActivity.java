@@ -1,13 +1,13 @@
 package xyz.lebalex.weatherirk;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,11 +23,13 @@ import java.net.URLConnection;
 public class SplashActivity extends Activity {
 
     private static int SPLASH_TIME_OUT = 2000;
+    private SharedPreferences sp;
     private String url = "https://www.lebalex.xyz/meteo.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
         getJsonFromUrl(url);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -62,10 +64,9 @@ public class SplashActivity extends Activity {
             try {
                 JSONObject jsonObject = new JSONObject(resultJson);
                 if(jsonObject.getString("meteo_url")!=null) {
-                    SharedPreferences sp = getDefaultSharedPreferences(SplashActivity.this);
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("meteo_url", jsonObject.getString("meteo_url"));
-                    editor.commit();
+                    editor.apply();
                 }
 
 

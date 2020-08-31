@@ -3,9 +3,9 @@
     package="xyz.lebalex.weatherirk">
 
     <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
 
@@ -16,9 +16,14 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".SettingsActivity2"
+            android:label="@string/title_activity_settings2"></activity>
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme" android:autoRemoveFromRecents="true">
+            android:autoRemoveFromRecents="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +32,9 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:autoRemoveFromRecents="true"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" android:autoRemoveFromRecents="true">
+            android:theme="@style/AppTheme.NoActionBar">
 
             <!--
             intent-filter>
@@ -38,9 +44,7 @@
             </intent-filter
             -->
         </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
+
         <activity android:name=".LogActivity" />
 
         <receiver
@@ -55,7 +59,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_metadata" />
         </receiver>
-
         <receiver
             android:name=".UpdatesReceiver"
             android:enabled="true"
@@ -63,14 +66,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
 
-
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6392397454770928~3042427784"/>
+            android:value="ca-app-pub-6392397454770928~3042427784" />
+
     </application>
 
 </manifest>

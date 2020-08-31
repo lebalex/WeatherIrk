@@ -2,14 +2,11 @@ package xyz.lebalex.weatherirk;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -19,26 +16,24 @@ import android.widget.GridLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static String APP_PREFERENCES="WeatherIrk";
+    private SharedPreferences sp;
     private GridLayout gridlayout;
     private ProgressBar progressBar3;
     private static JSONObject[] entries;
@@ -73,7 +68,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        MobileAds.initialize(this, "ca-app-pub-6392397454770928~3042427784");
+        //MobileAds.initialize(this, "ca-app-pub-6392397454770928~3042427784");
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
 
 
         AdView mAdView = (AdView) findViewById(R.id.adView);
@@ -84,12 +85,57 @@ public class MainActivity extends AppCompatActivity {
         gridlayout = (GridLayout ) findViewById(R.id.grid);
         progressBar3 = (ProgressBar ) findViewById(R.id.progressBar3);
 
-        StartServices.startBackgroundService(this);
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        StartServices.startBackgroundService(this, sp.getString("update_frequency", "60"));
 
-        SharedPreferences sp = getDefaultSharedPreferences(this);
-        if(sp.getString("meteo_url",null)!=null)
-            new GetWaether().execute(new String[]{sp.getString("meteo_url",null)});
-        else
+
+        if(sp.getString("meteo_url",null)!=null) {
+            //new GetWaether().execute(new String[]{sp.getString("meteo_url",null)});
+            TaskRunner taskRunner = new TaskRunner();
+            taskRunner.executeAsync(new HttpRunningTask(getApplicationContext(),sp.getString("meteo_url",null)), new Callback<String>() {
+                @Override
+                public void onComplete(String data) {
+                    if(data!="") {
+                        JSONObject dataJsonObj = null;
+
+                        try {
+                            JSONArray jsonArray = new JSONArray(data);
+                            entries = new JSONObject[jsonArray.length()];
+                            int id_notNan=-1;
+                            for (int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject json = jsonArray.getJSONObject(i);
+                                String where = json.getString("where");
+                                String val = json.getString("temp");
+                                entries[i]=json;
+                                if(!val.contains("NaN")) {
+                                    setValue(gridlayout, where, val, i);
+                                    if(id_notNan<0)
+                                        id_notNan=i;
+                                }
+                            }
+                            JSONObject json_w = jsonArray.getJSONObject(Integer.parseInt(sp.getString("place_temp", "0")));
+                            if(json_w.getString("temp").contains("NaN"))
+                                json_w=jsonArray.getJSONObject(id_notNan);
+
+
+                            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplication());
+                            int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
+                            if (ids.length > 0) {
+                                for (int id : ids) {
+                                    new WidgetHelper().updateWidget(getApplication(), appWidgetManager, id, json_w);
+                                }
+                            }
+                        }catch(Exception e){
+                            LogWrite.LogError(getApplicationContext(), e.getMessage());
+                        }
+                    }
+                    progressBar3.setVisibility(View.GONE);
+                }
+
+            });
+
+                }else
         {
             progressBar3.setVisibility(View.GONE);
             MessageBox(getResources().getString(R.string.not_data));
@@ -151,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         param.setGravity(Gravity.RIGHT);
         rowTextView2.setLayoutParams (param);
     }
-
+/*
     class GetWaether extends AsyncTask<String, Void, String> {
 
         @Override
@@ -230,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
             progressBar3.setVisibility(View.GONE);
         }
     }
-
+*/
 
     public static JSONObject[] getEntries() {
         return entries;
@@ -253,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent i = new Intent(this, SettingsActivity.class);
+            Intent i = new Intent(this, SettingsActivity2.class);
             startActivity(i);
             return true;
         }

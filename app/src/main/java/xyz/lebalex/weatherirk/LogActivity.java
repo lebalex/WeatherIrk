@@ -1,8 +1,8 @@
 package xyz.lebalex.weatherirk;
 
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 public class LogActivity extends AppCompatActivity {
     private  LogActivity ctx = this;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,7 @@ public class LogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView logstring = (TextView) findViewById(R.id.logstring);
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
         logstring.setText(sp.getString("logs",""));
 
 
@@ -27,7 +28,6 @@ public class LogActivity extends AppCompatActivity {
         logtitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
                 String str = sp.getString("logs", "");
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("logs", "");
