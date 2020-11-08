@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -32,7 +33,6 @@ import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity {
-    public static String APP_PREFERENCES="WeatherIrk";
     private SharedPreferences sp;
     private GridLayout gridlayout;
     private ProgressBar progressBar3;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         gridlayout = (GridLayout ) findViewById(R.id.grid);
         progressBar3 = (ProgressBar ) findViewById(R.id.progressBar3);
 
-        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
         StartServices.startBackgroundService(this, sp.getString("update_frequency", "60"));
 
 

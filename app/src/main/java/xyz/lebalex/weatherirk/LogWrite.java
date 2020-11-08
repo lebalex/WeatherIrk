@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 
+import androidx.preference.PreferenceManager;
+
 import java.util.Calendar;
 
 /**
@@ -28,7 +30,7 @@ public class LogWrite {
     {
         try {
             //Log.i("LogWrite", str);
-            SharedPreferences sp = pContext.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(pContext);
                 Calendar calen = Calendar.getInstance();
                 int c = calen.get(Calendar.DATE);
                 String logs = sp.getString("logs", "");

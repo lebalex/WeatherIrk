@@ -16,6 +16,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import org.json.JSONObject;
 
@@ -30,7 +31,7 @@ public class SettingsActivity2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mResources = getResources();
-        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.settings_activity);
         getSupportFragmentManager()
                 .beginTransaction()

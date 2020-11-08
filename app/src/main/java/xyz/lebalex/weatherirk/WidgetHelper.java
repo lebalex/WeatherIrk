@@ -10,6 +10,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import androidx.preference.PreferenceManager;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -181,7 +183,7 @@ public class WidgetHelper {
         this.context = ctx;
         this.appWidgetManager = appWidgetManager;
         this.widgetID = widgetID;
-        SharedPreferences sp = ctx.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
         //if(sp.getString("meteo_url",null)!=null)
             //new GetWaether().execute(new String[]{sp.getString("meteo_url","http://lebalex.xyz/api/meteo")});
         String result = getWaether(context, sp.getString("meteo_url","http://lebalex.xyz/api/meteo"));

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.preference.PreferenceManager;
+
 import java.util.Calendar;
 
 
@@ -16,7 +18,7 @@ public class UpdatesReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent)
     {
         try {
-            SharedPreferences sp = context.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
             StartServices.startBackgroundService(context, sp.getString("update_frequency", "60"));
             if (intent != null) {

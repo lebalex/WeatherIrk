@@ -3,6 +3,8 @@ package xyz.lebalex.weatherirk;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +21,7 @@ public class LogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView logstring = (TextView) findViewById(R.id.logstring);
-        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
         logstring.setText(sp.getString("logs",""));
 
 

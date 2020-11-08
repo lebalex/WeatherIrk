@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.StrictMode;
 
 
+import androidx.preference.PreferenceManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +31,7 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
         getJsonFromUrl(url);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
