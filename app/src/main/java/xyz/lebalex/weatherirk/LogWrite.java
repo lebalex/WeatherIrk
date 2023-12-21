@@ -14,7 +14,7 @@ import java.util.Calendar;
 
 public class LogWrite {
     public static void Log(Context pContext, String str) {
-        /*SharedPreferences sp = pContext.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        /*SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(pContext);
         if (sp.getBoolean("save_log", false)) {
             WriteLog(pContext, str);
         }*/

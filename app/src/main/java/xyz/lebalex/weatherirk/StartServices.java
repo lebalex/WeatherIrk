@@ -27,7 +27,7 @@ public class StartServices {
             alarmIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
             alarmIntent.setAction("ACTION_AUTO_UPDATE_WIDGET");
             PendingIntent pendingIntent;
-            pendingIntent = PendingIntent.getBroadcast(ctx, 121236, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            pendingIntent = PendingIntent.getBroadcast(ctx, 121236, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
             AlarmManager manager = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
 
             Calendar startCalen = Calendar.getInstance();

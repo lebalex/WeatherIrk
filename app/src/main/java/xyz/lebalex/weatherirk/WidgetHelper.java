@@ -127,8 +127,10 @@ public class WidgetHelper {
             Intent configIntent = new Intent(ctx, SplashActivity.class);
             configIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
             configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+
             PendingIntent pIntent = PendingIntent.getActivity(ctx, widgetID,
-                    configIntent, 0);
+                    configIntent, PendingIntent.FLAG_IMMUTABLE);
+
 
             widgetView.setOnClickPendingIntent(R.id.where, pIntent);
             widgetView.setOnClickPendingIntent(R.id.temp, pIntent);
@@ -146,7 +148,7 @@ public class WidgetHelper {
             updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             PendingIntent pIntentUpdate = PendingIntent.getBroadcast(ctx, 0,
-                    updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    updateIntent, PendingIntent.FLAG_IMMUTABLE/*PendingIntent.FLAG_UPDATE_CURRENT*/);
 
 
             widgetView.setOnClickPendingIntent(R.id.updateBar, pIntentUpdate);
@@ -185,8 +187,8 @@ public class WidgetHelper {
         this.widgetID = widgetID;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
         //if(sp.getString("meteo_url",null)!=null)
-            //new GetWaether().execute(new String[]{sp.getString("meteo_url","http://lebalex.xyz/api/meteo")});
-        String result = getWaether(context, sp.getString("meteo_url","http://lebalex.xyz/api/meteo"));
+            //new GetWaether().execute(new String[]{sp.getString("meteo_url","http://lebalex.ru/api/meteo")});
+        String result = getWaether(context, sp.getString("meteo_url","http://lebalex.ru/api/meteo"));
         if(result!="") {
             JSONObject dataJsonObj = null;
             try {

@@ -58,6 +58,20 @@ public class SettingsActivity2 extends AppCompatActivity {
                 }
             });
 
+//            final ListPreference fontSizePreference = (ListPreference) findPreference("font_size");
+//            fontSizePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//                @Override
+//                public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                    String stringValue = newValue.toString();
+//                    if (!stringValue.equals(sp.getString("font_size", "0"))) {
+//                        SharedPreferences.Editor editor = sp.edit();
+//                        editor.putString("font_size", stringValue);
+//                        editor.apply();
+//                    }
+//                    return true;
+//                }
+//            });
+
             final ListPreference listPreference = (ListPreference) findPreference("place_temp");
             setListPreferenceData(listPreference);
             listPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

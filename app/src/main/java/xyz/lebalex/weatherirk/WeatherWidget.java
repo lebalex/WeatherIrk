@@ -70,7 +70,7 @@ public class WeatherWidget extends AppWidgetProvider {
         super.onDisabled(context);
         Intent intent0 = new Intent(context, UpdatesReceiver.class);
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.cancel(PendingIntent.getBroadcast(context, 121236, intent0, PendingIntent.FLAG_CANCEL_CURRENT));
+        alarmMgr.cancel(PendingIntent.getBroadcast(context, 121236, intent0, PendingIntent.FLAG_IMMUTABLE));
 
 
     }

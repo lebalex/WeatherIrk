@@ -26,7 +26,13 @@
         app:useSimpleSummaryProvider="true"
         app:title="Район на виджете"
         />
-
+    <EditTextPreference
+        app:defaultValue="20"
+        app:key="font_size"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_title_font_size" />
 
 
 

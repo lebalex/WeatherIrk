@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -20,12 +21,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
-
+/*
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;*/
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,17 +70,17 @@ public class MainActivity extends AppCompatActivity {
         });*/
 
         //MobileAds.initialize(this, "ca-app-pub-6392397454770928~3042427784");
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        /*MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
-        });
+        });*/
 
 
 
-        AdView mAdView = (AdView) findViewById(R.id.adView);
+        /*AdView mAdView = (AdView) findViewById(R.id.adView);
         mAdView.loadAd(new AdRequest.Builder()
-                .setRequestAgent("android_studio:ad_template").build());
+                .setRequestAgent("android_studio:ad_template").build());*/
 
 
         gridlayout = (GridLayout ) findViewById(R.id.grid);
@@ -137,8 +138,25 @@ public class MainActivity extends AppCompatActivity {
 
                 }else
         {
+            /*setValue(gridlayout, "where", "val", 0);*/
             progressBar3.setVisibility(View.GONE);
+try {
+    JSONArray jsonArray = new JSONArray("[{'where':'Нет данных','temp':''}]");
+    JSONObject json_w = jsonArray.getJSONObject(0);
+    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplication());
+    int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
+    if (ids.length > 0) {
+        for (int id : ids) {
+            new WidgetHelper().updateWidget(getApplication(), appWidgetManager, id, json_w);
+        }
+    }
+}catch(Exception e)
+{
+    LogWrite.LogError(getApplicationContext(), e.getMessage());
+}
+
             MessageBox(getResources().getString(R.string.not_data));
+
         }
 
 
@@ -166,7 +184,8 @@ public class MainActivity extends AppCompatActivity {
     {
         final TextView rowTextView = new TextView(this);
         rowTextView.setText(where);
-        rowTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        rowTextView.setTextColor(Color.BLACK);
+        rowTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, Integer.parseInt(sp.getString("font_size", "20")));
         rowTextView.setPadding(0,0,0,20);
         gridlayout.addView(rowTextView);
         GridLayout.LayoutParams param =new GridLayout.LayoutParams();
@@ -183,7 +202,8 @@ public class MainActivity extends AppCompatActivity {
 
         final TextView rowTextView2 = new TextView(this);
         rowTextView2.setText(val);
-        rowTextView2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        rowTextView2.setTextColor(Color.BLACK);
+        rowTextView2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, Integer.parseInt(sp.getString("font_size", "20")));
         rowTextView2.setGravity(Gravity.RIGHT);
         gridlayout.addView(rowTextView2);
         param =new GridLayout.LayoutParams();
