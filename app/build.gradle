@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
 
         defaultConfig {
         applicationId "xyz.lebalex.weatherirk"
         minSdkVersion 23
 
-        targetSdkVersion 33
-        versionCode 218
-        versionName "2.1.8"
+        targetSdkVersion 34
+        versionCode 20231222
+        versionName "2.1.9"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         setProperty("archivesBaseName", "weather-$versionName")
     }
@@ -27,8 +27,10 @@ android {
     }
     namespace 'xyz.lebalex.weatherirk'
     allprojects {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        tasks.withType(JavaCompile).tap {
+            configureEach {
+                options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            }
         }
     }
 }
@@ -37,12 +39,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
 
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.11.0'
     /*implementation 'com.google.android.gms:play-services-ads:19.3.0'
     implementation 'com.google.firebase:firebase-core:17.5.0'*/
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.2.1'
 
 }
 //apply plugin: 'com.google.gms.google-services'

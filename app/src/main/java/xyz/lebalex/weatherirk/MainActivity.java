@@ -130,6 +130,9 @@ public class MainActivity extends AppCompatActivity {
                         }catch(Exception e){
                             LogWrite.LogError(getApplicationContext(), e.getMessage());
                         }
+                    }else
+                    {
+                        setValue(gridlayout, "Иркутск", "0", 0);
                     }
                     progressBar3.setVisibility(View.GONE);
                 }
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }else
         {
-            /*setValue(gridlayout, "where", "val", 0);*/
+            setValue(gridlayout, "Иркутск", "0", 0);
             progressBar3.setVisibility(View.GONE);
 try {
     JSONArray jsonArray = new JSONArray("[{'where':'Нет данных','temp':''}]");

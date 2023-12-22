@@ -1,6 +1,7 @@
 package xyz.lebalex.weatherirk;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -27,8 +28,8 @@ public class HttpRunningTask implements Callable<String> {
         try {
             URL url = new URL(this.input_url);
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setConnectTimeout(35000);
-            urlConnection.setReadTimeout(35000);
+            urlConnection.setConnectTimeout(10 * 1000);
+            urlConnection.setReadTimeout(10 * 1000);
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoOutput(false);
             urlConnection.connect();
@@ -45,6 +46,7 @@ public class HttpRunningTask implements Callable<String> {
             }
         } catch (Exception e) {
             //LogWrite.Logg(context,  "http: "+e.getMessage());
+            Log.e("HTTP_RUN",e.getMessage());
         } finally {
             urlConnection.disconnect();
             //LogWrite.Logg(context, "finally: "+result);

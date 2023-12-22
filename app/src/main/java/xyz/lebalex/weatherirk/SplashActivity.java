@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.util.Log;
 
 
 import androidx.preference.PreferenceManager;
@@ -24,7 +25,6 @@ import java.net.URLConnection;
  */
 public class SplashActivity extends Activity {
 
-    private static int SPLASH_TIME_OUT = 2000;
     private SharedPreferences sp;
     private String url = "https://www.lebalex.ru/meteo.json";
 
@@ -58,8 +58,8 @@ public class SplashActivity extends Activity {
             StrictMode.setThreadPolicy(policy);
             URL jsonUrl = new URL(urls);
             URLConnection dc = jsonUrl.openConnection();
-            dc.setConnectTimeout(10 * 1000);
-            dc.setReadTimeout(10 * 1000);
+            dc.setConnectTimeout(5 * 1000);
+            dc.setReadTimeout(5 * 1000);
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(
                     dc.getInputStream()));
             resultJson = inputStream.readLine();
@@ -73,10 +73,10 @@ public class SplashActivity extends Activity {
 
 
             } catch (JSONException e) {
-
+                Log.e("SPLASH",e.getMessage());
             }
         } catch (Exception e4) {
-
+            Log.e("SPLASH",e4.getMessage());
         }
     }
 
