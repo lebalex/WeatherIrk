@@ -7,6 +7,11 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/politic"
+        android:orderInCategory="101"
+        android:title="@string/politic"
+        app:showAsAction="never" />
     <!--item
         android:id="@+id/action_backgroundStatus"
         android:orderInCategory="100"

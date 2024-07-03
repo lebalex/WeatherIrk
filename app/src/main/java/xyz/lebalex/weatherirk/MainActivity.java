@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -336,6 +337,11 @@ try {
             startActivity(intent);
             return true;
         }*/
+        if (id == R.id.politic) {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.politic_link)));
+            startActivity(i);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
