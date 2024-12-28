@@ -8,8 +8,8 @@ android {
         minSdkVersion 23
 
         targetSdkVersion 34
-        versionCode 20240518
-        versionName "2.2.1"
+        versionCode 20241228
+        versionName "2.2.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         setProperty("archivesBaseName", "weather-$versionName")
     }
