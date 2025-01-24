@@ -32,6 +32,7 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             taskRunner.executeAsync(new HttpRunningTask(getApplicationContext(),sp.getString("meteo_url",null)), new Callback<String>() {
                 @Override
                 public void onComplete(String data) {
-                    if(data!="") {
+                    if(!Objects.equals(data, "")) {
                         JSONObject dataJsonObj = null;
 
                         try {
@@ -122,11 +123,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplication());
-                            int ids[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
-                            if (ids.length > 0) {
-                                for (int id : ids) {
-                                    new WidgetHelper().updateWidget(getApplication(), appWidgetManager, id, json_w);
-                                }
+                            int[] ids = appWidgetManager.getAppWidgetIds(new ComponentName(getApplication(), WeatherWidget.class));
+                            for (int id : ids) {
+                                new WidgetHelper().updateWidget(getApplication(), appWidgetManager, id, json_w);
                             }
                         }catch(Exception e){
                             LogWrite.LogError(getApplicationContext(), e.getMessage());
