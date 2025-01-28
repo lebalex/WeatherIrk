@@ -71,9 +71,10 @@ public class SplashActivity extends Activity {
             resultJson = inputStream.readLine();
             try {
                 JSONObject jsonObject = new JSONObject(resultJson);
-                if(jsonObject.getString("meteo_url")!=null) {
+                String mu = jsonObject.getString("meteo_url");
+                if(mu!=null) {
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("meteo_url", jsonObject.getString("meteo_url"));
+                    editor.putString("meteo_url", mu);
                     editor.apply();
                 }else
                 {
